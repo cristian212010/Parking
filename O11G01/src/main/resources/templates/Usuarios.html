@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmls="//www.w3.org/1999/xhtml">
+
+<head>
+    <title>Usuarios</title>
+    <link rel="icon" type="image/jpg"
+        href="http://misiontic2022.mintic.gov.co/mt2022/assets/assets/images/logo-mision.png" />
+    <meta charset="UTF-8" />
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous" />
+</head>
+
+<body>
+    <div class="card bg-dark text-white">
+        <header class="container">
+            <nav class="d-flex flex-wrap justify-content-center py-3 mb-4 border-bottom">
+                <a th:href="@{/inicio}"
+                    class="d-flex align-items-center mb-3 mb-md-0 me-md-auto text-dark text-decoration-none">
+                    <img src="http://misiontic2022.mintic.gov.co/mt2022/assets/assets/images/logo-mision.png"
+                        height="42" />
+                    <h3 class="card-tittle text-white">&nbsp; EasyParking</h3>
+                </a>
+                <ul class="nav nav-pills">
+                    <li class="nav nav-item"><a th:href="@{/entradas}" class="nav-link text-white">Inicio</a></li>
+                    <li class="nav nav-item"><a th:href="@{/salidas}" class="nav-link text-white">Salidas</a></li>
+                    <li class="nav nav-item"><a th:href="@{/facturas}" class="nav-link text-white">Facturas</a></li>
+                    <li class="nav nav-item"><a class="nav-link shadow active">Usuarios</a></li>
+                    <li class="nav nav-item"><a th:href="@{/personas}" class="nav-link text-white">Personas</a></li>
+                    <li class="nav nav-item"><a th:href="@{/plazas}" class="nav-link text-white">Plazas</a></li>
+                    <li class="nav nav-item"><a th:href="@{/configuracion}" class="nav-link text-white">Configuración</a>
+                    </li>
+                </ul>
+            </nav>
+        </header>
+        <section class="container">
+            <h4 class="card-tittle" th:text="${titulo}"></h4>
+            <div class="row">
+                <form class="row g-3" th:action="@{/usuarios/guardar}" method="post" th:object="${usuario}">
+                    <input type="hidden" name="idUsuarios" th:field="*{idUsuarios}" />
+                    <div class="col-md-6">
+                        <label for="usuario" class="form-label">Usuario:</label>
+                        <input class="shadow border-3 form-control" type="text" name="usuario" th:field="*{usuario}" />
+                    </div>
+                    <div class="col-md-6">
+                        <label for="clave" class="form-label">Clave:</label>
+                        <input class="shadow border-3 form-control" type="text" name="clave" th:field="*{clave}" />
+                    </div>
+                    <div class="col-md-6">
+                        <div class="col-md-6">
+                            <label for="rol" class="form-label">Rol:</label>
+                        </div>
+                        <div class="form-check form-check-inline">
+                            <input class="shadow border-3 form-check form-check-input" type="radio" name="rol"
+                                value="Administrador" th:field="*{rol}" /><label
+                                class="form-check-label">&nbsp; Administrador</label>
+                        </div>
+                        <div class="form-check form-check-inline">
+                            <input class="shadow border-3 form-check form-check-input" type="radio" name="rol"
+                                value="Recepcionista" th:field="*{rol}" /><label
+                                class="form-check-label">&nbsp; Recepcionista</label>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <label for="Personas" class="form-label">Persona asociada:</label>
+                        <select class="shadow border-3 form-select" name="Personas" th:field="*{persona}">
+                            <option value="0" selected>Seleccione...</option>
+                            <option th:each="persona: ${personas}" th:value="${persona.idPersonas}"
+                                th:text="${persona.numDoc}+ ' - '+ ${persona.nombres}+ ' - '+ ${persona.apellidos}">
+                            </option>
+                        </select>
+                    </div>
+                    <div class="mb-4"><input class="btn shadow btn-primary" type="submit" name="guardar" value="Guardar">
+                    </div>
+                </form>
+            </div>
+        </section>
+    </div>
+    <div class="container">
+        <div th:if="${usuarios != null and !usuarios.empty}">
+            <br />
+            <h4 class="card-tittle">Lista de Usuarios</h4>
+            <table class="shadow table table-striped table-bordered mt-4">
+                <thead>
+                    <tr class="table-dark">
+                        <th scope="col">Usuario</th>
+                        <th scope="col">Clave</th>
+                        <th scope="col">Rol</th>
+                        <th scope="col">Persona Asociada</th>
+                        <th scope="col">Acciones</th>
+                    </tr>
+                </thead>
+                <tbody id="users-table">
+                    <tr th:each="user: ${usuarios}">
+                        <td th:text="${user.usuario}"></td>
+                        <td th:text="${user.clave}"></td>
+                        <td th:text="${user.rol}"></td>
+                        <td
+                            th:text="${user.persona.numDoc} + ' - ' + ${user.persona.nombres} + ' ' + ${user.persona.apellidos}">
+                        </td>
+                        <td>
+                            <a th:href="@{/usuarios/editar/} + ${user.idUsuarios}" type="submit"
+                                class="btn shadow btn-primary">Editar</a>
+                            <a th:href="@{/usuarios/eliminar/} + ${user.idUsuarios}" type="submit"
+                                class="btn shadow btn-dark">Eliminar</a>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        <div th:if="${usuarios == null or usuarios.empty}">La lista esta vacia</div>
+        </section>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p"
+        crossorigin="anonymous"></script>
+</body>
+
+</html>
